@@ -43,6 +43,13 @@ jobs:
           bash deploy/sentry_release.sh
           find dist/ -type f -name "*.map" -delete
           zip -r dist.zip dist
+      - name: Generate Tag Name
+        id: release_tag
+        run: |
+          VERSION=$(date +'%Y.%m.%d.%H%M')
+          echo "VERSION=v$VERSION" >> $GITHUB_OUTPUT
+        env:
+          TZ: "Asia/Tokyo"
 
       - name: Deploy to Release
         uses: softprops/action-gh-release@v1
@@ -50,3 +57,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           files: dist.zip
+          tag_name: ${{ steps.release_tag.outputs.VERSION }}
